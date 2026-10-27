@@ -1,5 +1,7 @@
 import os
+import re
 import json
+import logging
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
@@ -7,6 +9,8 @@ from typing import Optional
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 # Initialize Gemini Client
 api_key = os.getenv("GEMINI_API_KEY")
@@ -60,23 +64,126 @@ Examples:
    {"transactions": [{"intent": "expense", "amount": 0, "category": "Food", "note": "dinner", "needs_clarification": true, "question": "Kitne ka bill tha?", "date": null}]}
 """
 
-def parse_expense_text(text: str, current_time_str: str = "") -> list[ParsedTransaction]:
-    if not client:
-        raise Exception("Gemini API key is missing.")
-    
-    prompt = f"Current Time Context (Resolve dates relative to this): {current_time_str}\n\nUser Message: {text}"
-    
-    response = client.models.generate_content(
-        model='gemini-2.5-flash',
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION,
-            response_mime_type="application/json",
-            response_schema=ParsedTransactionList,
-            temperature=0.0
-        ),
-    )
-    
-    parsed_json = json.loads(response.text)
-    return [ParsedTransaction(**t) for t in parsed_json.get("transactions", [])]
+CATEGORY_KEYWORDS = {
+    "Travel": ["petrol", "diesel", "fuel", "cng", "uber", "ola", "auto", "cab", "metro", "bus", "train", "flight", "ticket", "vehicle", "fare", "toll", "rapido", "ride"],
+    "Food": ["chai", "tea", "coffee", "water", "bottle", "khana", "dinner", "lunch", "breakfast", "nasta", "nashta", "swiggy", "zomato", "food", "cafe", "restaurant", "burger", "pizza", "samosa", "maggi", "snack", "snacks", "roti", "doodh", "milk", "biryani", "dhaba", "canteen"],
+    "Bills": ["bijli", "electricity", "light bill", "bill", "recharge", "wifi", "rent", "gas", "cylinder", "broadband", "emi", "maintenance", "water bill"],
+    "Shopping": ["shoes", "shoe", "clothes", "cloth", "kapde", "shirt", "pant", "jeans", "shopping", "amazon", "flipkart", "myntra", "dress", "tshirt", "watch", "pantaloons", "zara", "h&m"],
+    "Health": ["medicine", "meds", "medical", "doctor", "hospital", "gym", "pharmacy", "tablet", "clinic", "fees", "treatment", "medicine", "dawa"],
+    "Entertainment": ["movie", "cinema", "theatre", "netflix", "game", "gaming", "prime", "hotstar", "ticket", "party", "outing", "popcorn"],
+}
 
+def guess_category(text: str) -> str:
+    text_low = text.lower()
+    for cat, kws in CATEGORY_KEYWORDS.items():
+        if any(kw in text_low for kw in kws):
+            return cat
+    return "Other"
+
+def fallback_regex_parser(text: str, current_time_str: str = "") -> list[ParsedTransaction]:
+    """Smart offline regex fallback that handles standard Hinglish/English transactions."""
+    raw = text.strip()
+    low = raw.lower()
+
+    # 1. Settle Paid: 'maine Rahul ko 300 wapis diye' / 'paid back 300 to Rahul'
+    m_spaid = re.search(r'maine\s+([A-Za-z]+)\s+ko\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:wapis|wapas|chuka)', low)
+    if not m_spaid:
+        m_spaid = re.search(r'paid\s+back\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:to\s+)?([A-Za-z]+)', low)
+        if m_spaid:
+            amt, person = float(m_spaid.group(1)), m_spaid.group(2).capitalize()
+            return [ParsedTransaction(intent="settle_paid", amount=amt, category="Other", person=person, note=f"{person} ko wapis diye")]
+    else:
+        person, amt = m_spaid.group(1).capitalize(), float(m_spaid.group(2))
+        return [ParsedTransaction(intent="settle_paid", amount=amt, category="Other", person=person, note=f"{person} ko wapis diye")]
+
+    # 2. Settle Received: 'Rahul ne 800 wapis diye' / 'received 800 from Rahul'
+    m_rec = re.search(r'([A-Za-z]+)\s+ne\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:wapis|wapas|diye)', low)
+    if not m_rec:
+        m_rec = re.search(r'received\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*from\s+([A-Za-z]+)', low)
+        if m_rec:
+            amt, person = float(m_rec.group(1)), m_rec.group(2).capitalize()
+            return [ParsedTransaction(intent="settle_received", amount=amt, category="Other", person=person, note=f"{person} ne wapis diye")]
+    else:
+        person, amt = m_rec.group(1).capitalize(), float(m_rec.group(2))
+        return [ParsedTransaction(intent="settle_received", amount=amt, category="Other", person=person, note=f"{person} ne wapis diye")]
+
+    # 3. Borrowed: 'Rahul se 200 liye' / 'borrowed 200 from Rahul'
+    m_bor = re.search(r'([A-Za-z]+)\s+se\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:liye|udhaar)', low)
+    if not m_bor:
+        m_bor = re.search(r'borrowed\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*from\s+([A-Za-z]+)', low)
+        if m_bor:
+            amt, person = float(m_bor.group(1)), m_bor.group(2).capitalize()
+            return [ParsedTransaction(intent="borrowed", amount=amt, category="Other", person=person, note=f"{person} se udhaar liye")]
+    else:
+        person, amt = m_bor.group(1).capitalize(), float(m_bor.group(2))
+        return [ParsedTransaction(intent="borrowed", amount=amt, category="Other", person=person, note=f"{person} se udhaar liye")]
+
+    # 4. Lent: 'Rahul ko 1000 diye' / 'aaj 1000 Rahul ko diye' / 'gave 1000 to Rahul'
+    m_lent = re.search(r'([A-Za-z]+)\s+ko\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:diye|udhaar)?', low)
+    if not m_lent:
+        m_lent = re.search(r'(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*([A-Za-z]+)\s+ko\s*(?:diye|udhaar)?', low)
+        if m_lent:
+            amt, person = float(m_lent.group(1)), m_lent.group(2).capitalize()
+            return [ParsedTransaction(intent="lent", amount=amt, category="Other", person=person, note=f"{person} ko udhaar")]
+    else:
+        person, amt = m_lent.group(1).capitalize(), float(m_lent.group(2))
+        return [ParsedTransaction(intent="lent", amount=amt, category="Other", person=person, note=f"{person} ko udhaar")]
+
+    # 5. Clarification for Lent if person missing: 'diye 500'
+    if (re.search(r'\b(diye|diya)\s+(?:₹|rs\.?|inr)?\s*(\d+)', low) or re.search(r'(\d+)\s*(?:diye|diya)', low)) and not any(k in low for k in ["ko", "se", "ne"]):
+        m_num = re.search(r'(\d+(?:\.\d+)?)', low)
+        if m_num:
+            return [ParsedTransaction(intent="lent", amount=float(m_num.group(1)), category="Other", needs_clarification=True, question="Kisko diye?")]
+
+    # 6. Extract Amount
+    all_nums = re.findall(r'(\d+(?:\.\d+)?)', low)
+    if not all_nums:
+        # Check if item mentioned without amount
+        if any(w in low for w in ["dinner", "lunch", "bill", "kharcha", "shopping", "petrol", "food", "party"]):
+            return [ParsedTransaction(intent="expense", amount=0.0, category=guess_category(low), note=raw, needs_clarification=True, question="Kitne rupaye ka tha?")]
+        return []
+
+    amount = float(all_nums[0])
+
+    # Clean description
+    desc = re.sub(r'(\d+(?:\.\d+)?)', '', low)
+    desc = re.sub(r'\b(rs|rupees|inr|spent|on|for|ka|ki|ke|bharvaya|diya|diye|purchased|bought|liya|liye|got)\b', '', desc)
+    desc = re.sub(r'[₹/,\-]', '', desc).strip()
+    if not desc:
+        desc = guess_category(low)
+
+    cat = guess_category(low)
+    intent = "income" if any(w in low for w in ["salary", "income", "credited", "freelance", "kamaaye", "got", "received"]) else "expense"
+    
+    return [ParsedTransaction(intent=intent, amount=amount, category=cat, note=desc, needs_clarification=False)]
+
+
+def parse_expense_text(text: str, current_time_str: str = "") -> list[ParsedTransaction]:
+    """Parse natural expense text via Gemini AI, with instant fallback to smart regex parser."""
+    # 1. Try Gemini if client is initialized
+    if client:
+        try:
+            prompt = f"Current Time Context (Resolve dates relative to this): {current_time_str}\n\nUser Message: {text}"
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=SYSTEM_INSTRUCTION,
+                    response_mime_type="application/json",
+                    response_schema=ParsedTransactionList,
+                    temperature=0.0
+                ),
+            )
+            parsed_json = json.loads(response.text)
+            txs = [ParsedTransaction(**t) for t in parsed_json.get("transactions", [])]
+            if txs:
+                return txs
+        except Exception as e:
+            logger.warning(f"Gemini API request failed ({e}). Seamlessly engaging smart regex fallback parser...")
+
+    # 2. Smart Regex Fallback (100% resilient offline / quota exceeded)
+    fallback_txs = fallback_regex_parser(text, current_time_str)
+    if fallback_txs:
+        return fallback_txs
+
+    return []

@@ -327,6 +327,20 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         await send_report(update.message, user.id, user.full_name)
         return ConversationHandler.END
 
+    # Friendly greeting detection
+    greetings = ["hello", "hi", "hey", "namaste", "pranam", "hii", "hlo", "yo", "kaise ho", "kya haal"]
+    if text_lower in greetings:
+        await update.message.reply_html(
+            "👋 <b>Namaste! Main MoneyMate hoon.</b>\n\n"
+            "Aap mujhe naturally apna kharcha ya udhaar likhkar bhej sakte hain, jaise:\n"
+            "• <code>100 ka petrol bharvaya</code>\n"
+            "• <code>20 ki chai</code>\n"
+            "• <code>Rahul ko 1000 udhaar diye</code>\n"
+            "• <code>Rahul ne 500 wapis diye</code>\n\n"
+            "Statement dekhne ke liye <b>/hisab</b> ya <b>/menu</b> dabayein! 🚀"
+        )
+        return ConversationHandler.END
+
     # Natural language statement request detection (if message does not contain transaction digits)
     statement_keywords = ["statement", "hisaab", "hisab", "kharcha dikhao", "report image"]
     if any(kw in text_lower for kw in statement_keywords) and not re.search(r'\d+', text):
@@ -357,7 +371,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         parsed_list = await asyncio.to_thread(parse_expense_text, text, current_time)
         
         if not parsed_list:
-            await wait_msg.edit_text("❌ No transactions found in your message.")
+            await wait_msg.edit_text(
+                "❌ <b>Koi kharcha ya amount nahi mila.</b>\n\n"
+                "Kripya amount ke saath likhein, jaise:\n"
+                "• <code>100 petrol</code>\n"
+                "• <code>1500 shoes</code>\n"
+                "• <code>Rahul ko 500 diye</code>\n"
+                "• <code>20 ki chai</code>"
+            )
             return ConversationHandler.END
             
         for parsed in parsed_list:
@@ -401,7 +422,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         
     except Exception as e:
         logger.error(f"Error parsing: {e}")
-        await wait_msg.edit_text("❌ Sorry, I couldn't understand that. Could you rephrase?")
+        await wait_msg.edit_text("❌ Is message ko record karne me problem aayi. Please format check karein, e.g. <code>100 petrol</code> ya <code>Rahul ko 500</code>.")
         
     return ConversationHandler.END
 
