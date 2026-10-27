@@ -1,0 +1,9 @@
+.env
+.env*
+*.env
+__pycache__
+*.pyc
+.pytest_cache
+*.db
+*.sqlite3
+moneymate_local.db
