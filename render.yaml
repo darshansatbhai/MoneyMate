@@ -3,8 +3,9 @@ services:
     name: moneymate-bot
     runtime: docker
     dockerfilePath: Dockerfile
-    dockerContext: bot
+    dockerContext: .
     plan: free
+
     region: oregon
     healthCheckPath: /health
     envVars:
