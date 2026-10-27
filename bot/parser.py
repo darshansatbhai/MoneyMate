@@ -35,8 +35,9 @@ Respond strictly in JSON matching the schema, returning a list of transactions. 
 
 Categories: Food, Travel, Bills, Shopping, Health, Entertainment, Other
 
-Intent mapping:
 - "Rahul ko 1000 diye" -> lent
+- "Mujhe Rahul ko 1000 dena hai jo baki hai" / "Rahul ko 1000 dena hai" -> borrowed (User owes Rahul)
+- "Rahul se 1000 lena hai jo baki hai" / "Rahul se 1000 lena hai" -> lent (Rahul owes user)
 - "Rahul ne 800 wapis diye" -> settle_received
 - "maine Rahul ko 300 wapis diye" -> settle_paid
 - "Rahul se 200 liye" -> borrowed
@@ -85,10 +86,40 @@ def fallback_regex_parser(text: str, current_time_str: str = "") -> list[ParsedT
     raw = text.strip()
     low = raw.lower()
 
-    # 1. Settle Paid: 'maine Rahul ko 300 wapis diye' / 'paid back 300 to Rahul'
-    m_spaid = re.search(r'maine\s+([A-Za-z]+)\s+ko\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:wapis|wapas|chuka)', low)
+    clean = re.sub(r'[!?,.]', ' ', low)
+
+    # 1. User owes someone: 'Mujhe pratham ko 7800 dena hai jo baki hai', 'pratham ko 7800 dena baaki hai'
+    # Keywords: dena hai, dena baaki, dena baki, dena tha, lautana hai, chukana hai
+    is_dena = any(k in clean for k in ["dena hai", "dena baaki", "dena baki", "dena tha", "lautana hai", "chukana hai", "owe"])
+    if is_dena:
+        m_owes = re.search(r'([A-Za-z]+)\s+ko\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?', clean)
+        if not m_owes:
+            m_owes = re.search(r'(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:to\s+)?([A-Za-z]+)\s+ko', clean)
+            if m_owes:
+                amt, person = float(m_owes.group(1)), m_owes.group(2).capitalize()
+                return [ParsedTransaction(intent="borrowed", amount=amt, category="Other", person=person, note=f"{person} ko dena baaki")]
+        else:
+            person, amt = m_owes.group(1).capitalize(), float(m_owes.group(2))
+            return [ParsedTransaction(intent="borrowed", amount=amt, category="Other", person=person, note=f"{person} ko dena baaki")]
+
+    # 2. Someone owes user: 'pratham se 7800 lena hai jo baki hai', 'pratham se 7800 lena baaki hai'
+    # Keywords: lena hai, lena baaki, lena baki, lena tha, vasoolna
+    is_lena = any(k in clean for k in ["lena hai", "lena baaki", "lena baki", "lena tha", "vasoolna"])
+    if is_lena:
+        m_rec_debt = re.search(r'([A-Za-z]+)\s+(?:se|ko)\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?', clean)
+        if not m_rec_debt:
+            m_rec_debt = re.search(r'(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*([A-Za-z]+)\s+(?:se|ko)', clean)
+            if m_rec_debt:
+                amt, person = float(m_rec_debt.group(1)), m_rec_debt.group(2).capitalize()
+                return [ParsedTransaction(intent="lent", amount=amt, category="Other", person=person, note=f"{person} se lena baaki")]
+        else:
+            person, amt = m_rec_debt.group(1).capitalize(), float(m_rec_debt.group(2))
+            return [ParsedTransaction(intent="lent", amount=amt, category="Other", person=person, note=f"{person} se lena baaki")]
+
+    # 3. Settle Paid: 'maine Rahul ko 300 wapis diye' / 'paid back 300 to Rahul'
+    m_spaid = re.search(r'maine\s+([A-Za-z]+)\s+ko\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:wapis|wapas|chuka)', clean)
     if not m_spaid:
-        m_spaid = re.search(r'paid\s+back\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:to\s+)?([A-Za-z]+)', low)
+        m_spaid = re.search(r'paid\s+back\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:to\s+)?([A-Za-z]+)', clean)
         if m_spaid:
             amt, person = float(m_spaid.group(1)), m_spaid.group(2).capitalize()
             return [ParsedTransaction(intent="settle_paid", amount=amt, category="Other", person=person, note=f"{person} ko wapis diye")]
@@ -96,10 +127,10 @@ def fallback_regex_parser(text: str, current_time_str: str = "") -> list[ParsedT
         person, amt = m_spaid.group(1).capitalize(), float(m_spaid.group(2))
         return [ParsedTransaction(intent="settle_paid", amount=amt, category="Other", person=person, note=f"{person} ko wapis diye")]
 
-    # 2. Settle Received: 'Rahul ne 800 wapis diye' / 'received 800 from Rahul'
-    m_rec = re.search(r'([A-Za-z]+)\s+ne\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:wapis|wapas|diye)', low)
+    # 4. Settle Received: 'Rahul ne 800 wapis diye' / 'received 800 from Rahul'
+    m_rec = re.search(r'([A-Za-z]+)\s+ne\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:wapis|wapas|diye)', clean)
     if not m_rec:
-        m_rec = re.search(r'received\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*from\s+([A-Za-z]+)', low)
+        m_rec = re.search(r'received\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*from\s+([A-Za-z]+)', clean)
         if m_rec:
             amt, person = float(m_rec.group(1)), m_rec.group(2).capitalize()
             return [ParsedTransaction(intent="settle_received", amount=amt, category="Other", person=person, note=f"{person} ne wapis diye")]
@@ -107,10 +138,10 @@ def fallback_regex_parser(text: str, current_time_str: str = "") -> list[ParsedT
         person, amt = m_rec.group(1).capitalize(), float(m_rec.group(2))
         return [ParsedTransaction(intent="settle_received", amount=amt, category="Other", person=person, note=f"{person} ne wapis diye")]
 
-    # 3. Borrowed: 'Rahul se 200 liye' / 'borrowed 200 from Rahul'
-    m_bor = re.search(r'([A-Za-z]+)\s+se\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:liye|udhaar)', low)
+    # 5. Borrowed: 'Rahul se 200 liye' / 'borrowed 200 from Rahul'
+    m_bor = re.search(r'([A-Za-z]+)\s+se\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:liye|udhaar)', clean)
     if not m_bor:
-        m_bor = re.search(r'borrowed\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*from\s+([A-Za-z]+)', low)
+        m_bor = re.search(r'borrowed\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*from\s+([A-Za-z]+)', clean)
         if m_bor:
             amt, person = float(m_bor.group(1)), m_bor.group(2).capitalize()
             return [ParsedTransaction(intent="borrowed", amount=amt, category="Other", person=person, note=f"{person} se udhaar liye")]
@@ -118,20 +149,25 @@ def fallback_regex_parser(text: str, current_time_str: str = "") -> list[ParsedT
         person, amt = m_bor.group(1).capitalize(), float(m_bor.group(2))
         return [ParsedTransaction(intent="borrowed", amount=amt, category="Other", person=person, note=f"{person} se udhaar liye")]
 
-    # 4. Lent: 'Rahul ko 1000 diye' / 'aaj 1000 Rahul ko diye' / 'gave 1000 to Rahul'
-    m_lent = re.search(r'([A-Za-z]+)\s+ko\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:diye|udhaar)?', low)
+    # 6. Lent: 'Rahul ko 1000 diye' / 'aaj 1000 Rahul ko diye' / 'gave 1000 to Rahul'
+    m_lent = re.search(r'([A-Za-z]+)\s+ko\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*(?:diye|udhaar|de diye|diya)', clean)
     if not m_lent:
-        m_lent = re.search(r'(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*([A-Za-z]+)\s+ko\s*(?:diye|udhaar)?', low)
-        if m_lent:
+        m_lent = re.search(r'(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:rs|rupees)?\s*([A-Za-z]+)\s+ko\s*(?:diye|udhaar|de diye|diya)', clean)
+        if not m_lent:
+            m_lent = re.search(r'(?:gave|lent)\s+(?:₹|rs\.?|inr)?\s*(\d+(?:\.\d+)?)\s*(?:to\s+)?([A-Za-z]+)', clean)
+            if m_lent:
+                amt, person = float(m_lent.group(1)), m_lent.group(2).capitalize()
+                return [ParsedTransaction(intent="lent", amount=amt, category="Other", person=person, note=f"{person} ko udhaar")]
+        else:
             amt, person = float(m_lent.group(1)), m_lent.group(2).capitalize()
             return [ParsedTransaction(intent="lent", amount=amt, category="Other", person=person, note=f"{person} ko udhaar")]
     else:
         person, amt = m_lent.group(1).capitalize(), float(m_lent.group(2))
         return [ParsedTransaction(intent="lent", amount=amt, category="Other", person=person, note=f"{person} ko udhaar")]
 
-    # 5. Clarification for Lent if person missing: 'diye 500'
-    if (re.search(r'\b(diye|diya)\s+(?:₹|rs\.?|inr)?\s*(\d+)', low) or re.search(r'(\d+)\s*(?:diye|diya)', low)) and not any(k in low for k in ["ko", "se", "ne"]):
-        m_num = re.search(r'(\d+(?:\.\d+)?)', low)
+    # 7. Clarification for Lent if person missing: 'diye 500'
+    if (re.search(r'\b(diye|diya)\s+(?:₹|rs\.?|inr)?\s*(\d+)', clean) or re.search(r'(\d+)\s*(?:diye|diya)', clean)) and not any(k in clean for k in ["ko", "se", "ne"]):
+        m_num = re.search(r'(\d+(?:\.\d+)?)', clean)
         if m_num:
             return [ParsedTransaction(intent="lent", amount=float(m_num.group(1)), category="Other", needs_clarification=True, question="Kisko diye?")]
 

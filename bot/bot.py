@@ -408,9 +408,20 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
                     except Exception:
                         pass
                 
-                note_str = f" · {parsed.note}" if parsed.note else ""
-                person_str = f" ({parsed.person})" if parsed.person else ""
-                replies.append(f"{emoji} ₹{parsed.amount:g} · {parsed.category}{note_str}{person_str} saved - {dt_str}")
+                if parsed.intent == "borrowed" and parsed.person:
+                    label = f"Udhaar ({parsed.person} ko dena baaki)"
+                elif parsed.intent == "lent" and parsed.person:
+                    label = f"Udhaar ({parsed.person} se lena baaki)"
+                elif parsed.intent == "settle_received" and parsed.person:
+                    label = f"Udhaar wapsi ({parsed.person} se mila)"
+                elif parsed.intent == "settle_paid" and parsed.person:
+                    label = f"Udhaar chukaya ({parsed.person} ko diya)"
+                else:
+                    note_str = f" · {parsed.note}" if parsed.note else ""
+                    person_str = f" ({parsed.person})" if parsed.person else ""
+                    label = f"{parsed.category}{note_str}{person_str}"
+
+                replies.append(f"{emoji} ₹{parsed.amount:g} · {label} saved - {dt_str}")
             
             reply_text = "\n".join(replies)
             if len(parsed_list) > 1:
