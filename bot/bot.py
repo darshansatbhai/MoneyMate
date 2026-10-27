@@ -397,9 +397,6 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
                 if parsed.person:
                     tx_data['person'] = parsed.person
                 save_transaction(db_user['id'], tx_data)
-                
-                emoji = "🔴" if parsed.intent in ["expense", "lent", "settle_paid"] else "🟢"
-                
                 dt_str = get_now_ist().strftime("%d %b, %I:%M %p")
                 if parsed.date:
                     try:
@@ -407,21 +404,34 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
                         dt_str = dt_obj.strftime("%d %b, %I:%M %p")
                     except Exception:
                         pass
-                
-                if parsed.intent == "borrowed" and parsed.person:
+
+                if parsed.intent == "self_transfer":
+
+                    emoji = "🔄"
+                    label = f"Self Transfer · {parsed.note} (Kharcha nahi maana gaya)"
+                elif parsed.intent == "investment":
+                    emoji = "📈"
+                    label = f"Investment · {parsed.note}"
+                elif parsed.intent == "borrowed" and parsed.person:
+                    emoji = "🔴"
                     label = f"Udhaar ({parsed.person} ko dena baaki)"
                 elif parsed.intent == "lent" and parsed.person:
+                    emoji = "🔴"
                     label = f"Udhaar ({parsed.person} se lena baaki)"
                 elif parsed.intent == "settle_received" and parsed.person:
+                    emoji = "🟢"
                     label = f"Udhaar wapsi ({parsed.person} se mila)"
                 elif parsed.intent == "settle_paid" and parsed.person:
+                    emoji = "🔴"
                     label = f"Udhaar chukaya ({parsed.person} ko diya)"
                 else:
+                    emoji = "🔴" if parsed.intent in ["expense", "lent", "settle_paid"] else "🟢"
                     note_str = f" · {parsed.note}" if parsed.note else ""
                     person_str = f" ({parsed.person})" if parsed.person else ""
                     label = f"{parsed.category}{note_str}{person_str}"
 
                 replies.append(f"{emoji} ₹{parsed.amount:g} · {label} saved - {dt_str}")
+
             
             reply_text = "\n".join(replies)
             if len(parsed_list) > 1:
