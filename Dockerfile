@@ -1,5 +1,5 @@
 # Official Microsoft Playwright image with Python and Chromium pre-installed
-FROM mcr.microsoft.com/playwright/python:v1.49.0-noble
+FROM mcr.microsoft.com/playwright/python:v1.64.1-noble
 
 WORKDIR /app
 
