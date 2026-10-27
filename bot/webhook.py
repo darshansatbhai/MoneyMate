@@ -29,13 +29,18 @@ async def lifespan(app: FastAPI):
         await application.bot.set_webhook(url=webhook_url, secret_token=secret_token)
         logger.info(f"Webhook set to {webhook_url}")
     else:
-        logger.warning("WEBHOOK_URL not set! Webhook not configured.")
+        logger.info("WEBHOOK_URL not set! Running in background polling mode with active HTTP health check...")
+        await application.bot.delete_webhook(drop_pending_updates=False)
+        await application.updater.start_polling()
         
     yield
     
     if application:
+        if application.updater and application.updater.running:
+            await application.updater.stop()
         await application.stop()
         await application.shutdown()
+
 
 app = FastAPI(lifespan=lifespan)
 

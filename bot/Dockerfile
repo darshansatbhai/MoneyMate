@@ -17,5 +17,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy bot codebase
 COPY . .
 
-# Run bot in polling mode (or override with webhook command)
-CMD ["python", "-u", "bot.py"]
+ENV PORT=8080
+EXPOSE 8080
+
+# Run bot with FastAPI health check and auto-polling/webhook
+CMD ["sh", "-c", "uvicorn webhook:app --host 0.0.0.0 --port ${PORT:-8080}"]
+
