@@ -1,0 +1,2397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Money Mate — AI Expense Tracker on Telegram (Hindi, Hinglish &amp; English)</title>
+  <meta name="description"
+    content="Money Mate is a free AI expense tracker that lives in Telegram. Log expenses, IOUs and income just by chatting in Hindi, Hinglish or English — text, voice or photos. No app to install.">
+  <link rel="canonical" href="https://moneymate-website.vercel.app/">
+  <link rel="icon" type="image/png" href="assets/img/logo-128.png">
+  <link rel="apple-touch-icon" href="assets/img/logo-512.png">
+  <meta name="theme-color" content="#F3F1ED">
+
+  <!-- Open Graph / social previews (absolute URLs required) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Money Mate">
+  <meta property="og:url" content="https://moneymate-website.vercel.app/">
+  <meta property="og:title" content="Money Mate — AI Expense Tracker on Telegram">
+  <meta property="og:description"
+    content="Log expenses just by chatting. Hindi, Hinglish or English. No apps to install.">
+  <meta property="og:image" content="https://moneymate-website.vercel.app/assets/img/logo-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Money Mate — AI Expense Tracker on Telegram">
+  <meta name="twitter:description"
+    content="Log expenses just by chatting. Hindi, Hinglish or English. No apps to install.">
+  <meta name="twitter:image" content="https://moneymate-website.vercel.app/assets/img/logo-512.png">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Money Mate",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Telegram",
+  "url": "https://moneymate-website.vercel.app/",
+  "description": "AI-powered Telegram bot for expense tracking and IOU ledger management in Hindi, Hinglish and English.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+}
+</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* ===== Homepage-only styles (shared styles live in assets/css/styles.css) ===== */
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      padding-block: 100px 80px;
+      perspective: 1200px;
+    }
+
+    .hero h1 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(48px, 7vw, 84px);
+      line-height: 1.05;
+      margin-block: 16px 24px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 480px;
+      margin: 0 0 24px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .hero-note {
+      margin-top: 20px;
+      font: 400 13px var(--mono);
+      color: var(--muted);
+    }
+
+    /* Trust strip */
+    .trust-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px 32px;
+      padding: 22px 16px;
+      border-block: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .trust-strip span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trust-strip svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Section headings */
+    .section-head {
+      text-align: center;
+      max-width: 640px;
+      margin: 120px auto 0;
+    }
+
+    .section-head h2,
+    .section-title {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(32px, 4.5vw, 48px);
+      line-height: 1.1;
+      margin: 12px 0;
+      letter-spacing: -0.01em;
+    }
+
+    .section-head h2 em,
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 17px;
+      margin: 0;
+    }
+
+    /* How it works */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 32px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .step:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .step-num {
+      display: inline-block;
+      font: 500 12px/1 var(--mono);
+      letter-spacing: .06em;
+      color: var(--accent-dark);
+      background: rgba(42, 171, 238, 0.1);
+      border-radius: 999px;
+      padding: 8px 12px;
+      margin-bottom: 20px;
+    }
+
+    .step h3 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+
+    .step p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .bubble {
+      display: inline-block;
+      margin-top: 20px;
+      background: #EEFFDE;
+      padding: 8px 12px;
+      border-radius: 12px 12px 4px 12px;
+      font-size: 14px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .bubble code {
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    /* iPhone Mockup */
+    .hero-phone-wrap {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .iphone-mockup {
+      width: 320px;
+      height: 650px;
+      border-radius: 48px;
+      background: #000;
+      box-shadow: 0 0 0 3px #B0B3B8, 0 0 0 6px #787A7D, 0 30px 60px rgba(0, 0, 0, 0.15);
+      border: 8px solid #000;
+      position: relative;
+      transform: scale(0.9);
+    }
+
+    .iphone-btn {
+      position: absolute;
+      background: #555;
+      border: 0;
+      padding: 0;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .iphone-btn::before {
+      content: "";
+      position: absolute;
+      inset: -4px -8px;
+    }
+
+    /* larger click/tap area */
+    .iphone-btn:active {
+      transform: scaleX(0.6);
+    }
+
+    .iphone-btn.silent {
+      width: 3px;
+      height: 26px;
+      left: -17px;
+      top: 100px;
+    }
+
+    .iphone-btn.vol-up {
+      width: 3px;
+      height: 50px;
+      left: -17px;
+      top: 150px;
+    }
+
+    .iphone-btn.vol-down {
+      width: 3px;
+      height: 50px;
+      left: -17px;
+      top: 215px;
+    }
+
+    .iphone-btn.power {
+      width: 3px;
+      height: 70px;
+      right: -17px;
+      top: 180px;
+    }
+
+    /* Interactive Hardware HUDs */
+    .screen-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .screen-overlay.off {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .volume-hud {
+      position: absolute;
+      left: 8px;
+      top: 150px;
+      width: 6px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 6px;
+      z-index: 100;
+      transform: translateX(-20px) scaleX(0.5);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+    }
+
+    .volume-hud.show {
+      transform: translateX(0) scaleX(1);
+      opacity: 1;
+    }
+
+    .volume-bar {
+      width: 100%;
+      height: 50%;
+      background: #fff;
+      transition: height 0.2s;
+    }
+
+    .silent-hud {
+      position: absolute;
+      top: 0px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px) scale(0.9);
+      opacity: 0;
+      background: rgba(20, 20, 20, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 40;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-family: -apple-system, sans-serif;
+      white-space: nowrap;
+    }
+
+    .silent-hud.show {
+      transform: translateX(-50%) translateY(32px) scale(1);
+      opacity: 1;
+    }
+
+    .iphone-notch {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 26px;
+      background: #000;
+      border-radius: 0 0 16px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      z-index: 50;
+    }
+
+    .iphone-camera {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #050505;
+      box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+
+    .iphone-speaker {
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      background: #111;
+    }
+
+    .iphone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 36px;
+      overflow: hidden;
+      background: #e8ecef;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .iphone-glare {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 36px;
+      background: linear-gradient(105deg, rgba(255, 255, 255, 0) 25%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0) 55%);
+      pointer-events: none;
+      z-index: 30;
+      overflow: hidden;
+    }
+
+    .telegram-app {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .home-indicator {
+      width: 120px;
+      height: 4px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 4px;
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+    }
+
+    /* iOS Status Bar */
+    .ios-status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 12px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 60;
+      color: #000;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .ios-status-bar .ios-icons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ios-signal,
+    .ios-wifi {
+      width: 15px;
+      height: 15px;
+    }
+
+    .ios-battery {
+      width: 22px;
+      height: 11px;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      padding: 1px;
+      position: relative;
+      margin-left: 2px;
+    }
+
+    .ios-battery::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 2px;
+      width: 2px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .ios-battery-level {
+      height: 100%;
+      background: currentColor;
+      border-radius: 1px;
+      width: 100%;
+      transition: width 1s, background 0.3s;
+    }
+
+    /* iOS Notification */
+    .ios-notification {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      z-index: 100;
+      transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+    }
+
+    .ios-notification.show {
+      top: 12px;
+    }
+
+    .ios-notification img {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+    }
+
+    .ios-notification .ios-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ios-notification .ios-text b {
+      font-size: 14px;
+      color: #000;
+      line-height: 1.2;
+      font-family: -apple-system, system-ui, sans-serif;
+      margin-bottom: 2px;
+    }
+
+    .ios-notification .ios-text span {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.2;
+      font-family: -apple-system, system-ui, sans-serif;
+    }
+
+
+    /* Floating Header & Bottom Bar */
+    .telegram-header-floating {
+      position: absolute;
+      top: 46px;
+      left: 12px;
+      right: 12px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .floating-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #000;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(255, 255, 255, 0.2);
+    }
+
+    .floating-pill {
+      flex: 1;
+      height: 42px;
+      border-radius: 21px;
+      display: flex;
+      align-items: center;
+      padding: 4px 12px 4px 6px;
+      gap: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(255, 255, 255, 0.2);
+    }
+
+    .floating-pill img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .floating-pill-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .floating-pill-text b {
+      font-size: 15px;
+      color: #000;
+      line-height: 1.1;
+      font-weight: 600;
+    }
+
+    .floating-pill-text small {
+      font-size: 13px;
+      color: #888;
+      font-weight: 500;
+    }
+
+    .telegram-bottom-floating {
+      position: absolute;
+      bottom: 20px;
+      left: 12px;
+      right: 12px;
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .menu-btn {
+      height: 42px;
+      padding: 0 12px;
+      border-radius: 21px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #000;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(255, 255, 255, 0.3);
+    }
+
+    .chat-input-field {
+      flex: 1;
+      height: 42px;
+      min-width: 0;
+      border-radius: 21px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 6px;
+      color: #333;
+      font-size: 15px;
+      font-weight: 500;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(255, 255, 255, 0.3);
+    }
+
+    .mic-btn {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #9b51e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(155, 81, 224, 0.4);
+      cursor: pointer;
+    }
+
+    /* Chat UI */
+    .chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 100px 16px 80px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      background: linear-gradient(135deg, #a890fe 0%, #ffb17a 45%, #f584b7 80%, #a890fe 100%);
+      position: relative;
+    }
+
+    .chat::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chat::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.15;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.83-54.627 54.627-.83-.83L54.627 0zm-5.092 0l.83.83-49.535 49.535-.83-.83L49.535 0zm-5.092 0l.83.83-44.443 44.443-.83-.83L44.443 0zm-5.092 0l.83.83-39.351 39.351-.83-.83L39.351 0zm-5.092 0l.83.83-34.259 34.259-.83-.83L34.259 0zm-5.092 0l.83.83-29.167 29.167-.83-.83L29.167 0z' fill='%23000000' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+
+    .chat>div {
+      position: relative;
+      z-index: 1;
+    }
+
+    .msg {
+      max-width: 88%;
+      padding: 10px 14px 22px;
+      border-radius: 16px;
+      font-size: 15px;
+      line-height: 1.4;
+      position: relative;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: msgPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes msgPop {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .msg.me {
+      align-self: flex-end;
+      background: #f3e8ff;
+      color: #4c1d95;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: #FFF;
+      color: #000;
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-info {
+      position: absolute;
+      bottom: 4px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .msg time {
+      font: 400 11px var(--mono);
+      color: rgba(0, 0, 0, 0.35);
+    }
+
+    .msg.me time {
+      color: rgba(139, 92, 246, 0.8);
+    }
+
+    .msg.me .msg-info::after {
+      content: "✓✓";
+      color: rgba(139, 92, 246, 0.8);
+      font-size: 10px;
+      letter-spacing: -2px;
+      margin-left: 3px;
+      font-weight: 700;
+    }
+
+    .date-pill {
+      align-self: center;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 8px 0;
+    }
+
+    /* Skeleton & Voice */
+    .skeleton {
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+      height: 14px;
+      margin-bottom: 6px;
+    }
+
+    .skeleton:last-child {
+      margin-bottom: 0;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    .voice-msg {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .play-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #2AABEE;
+      color: white;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .waveform {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      height: 20px;
+    }
+
+    .waveform i {
+      width: 3px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      animation: wave 0.8s infinite alternate;
+    }
+
+    .waveform i:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .waveform i:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .waveform i:nth-child(4) {
+      animation-delay: 0.2s;
+    }
+
+    .waveform i:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .waveform i:nth-child(6) {
+      animation-delay: 0.1s;
+    }
+
+    @keyframes wave {
+      0% {
+        height: 4px;
+      }
+
+      100% {
+        height: 18px;
+      }
+    }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .bento-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 36px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .bento-large {
+      grid-column: span 2;
+    }
+
+    .bento-tall {
+      grid-row: span 2;
+    }
+
+    .bento-card h3 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: 28px;
+      margin: 0 0 12px;
+    }
+
+    .bento-card p {
+      color: var(--muted);
+      margin: 0 0 24px;
+    }
+
+    .bento-row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .ledger-box {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 15px;
+      margin-top: auto;
+    }
+
+    .ledger-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+
+    .ledger-row:last-child {
+      margin-bottom: 0;
+      border-bottom: 0;
+      padding-bottom: 0;
+      color: var(--muted);
+    }
+
+    .ledger-row b {
+      color: var(--accent-dark);
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .ledger-row:last-child b {
+      color: var(--muted);
+    }
+
+    /* Voice & receipt visual */
+    .media-demo {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 240px;
+    }
+
+    .media-pill {
+      align-self: flex-end;
+      background: #EEFFDE;
+      border-radius: 14px 14px 4px 14px;
+      padding: 10px 14px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .receipt {
+      background: var(--bg);
+      border: 1px dashed #CFCAC2;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font: 400 12px/1.7 var(--mono);
+    }
+
+    .receipt div {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .receipt .total {
+      border-top: 1px dashed #CFCAC2;
+      margin-top: 6px;
+      padding-top: 6px;
+      font-weight: 500;
+    }
+
+    .logged {
+      align-self: flex-start;
+      font: 500 12px var(--mono);
+      color: #1e8e3e;
+      background: #e6f4ea;
+      border: 1px solid #ceead6;
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+
+    /* Interactive Demo */
+    .demo-section {
+      background: var(--surface);
+      padding: 60px 40px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      text-align: center;
+      margin-top: 120px;
+    }
+
+    .demo-section .section-title {
+      margin-bottom: 8px;
+    }
+
+    .demo-sub {
+      color: var(--muted);
+      margin: 0 auto 32px;
+      max-width: 520px;
+    }
+
+    .demo-input-wrap {
+      display: flex;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto 16px;
+    }
+
+    .demo-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 0 auto 28px;
+      max-width: 640px;
+    }
+
+    .chip {
+      font: 400 13px var(--body);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--fg);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .chip:hover {
+      border-color: var(--accent);
+      color: var(--accent-dark);
+    }
+
+    .demo-output {
+      overflow-x: auto;
+      background: var(--bg);
+      padding: 24px;
+      border-radius: 12px;
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 14px;
+      min-height: 200px;
+      border: 1px solid var(--line);
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+
+    .demo-output pre {
+      margin: 0;
+      color: var(--fg);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font: inherit;
+    }
+
+    .j-key {
+      color: var(--accent-dark);
+    }
+
+    .j-str {
+      color: #0B7A55;
+    }
+
+    .j-num {
+      color: #B4540A;
+    }
+
+    .j-lit {
+      color: var(--muted);
+    }
+
+    .demo-disclaimer {
+      margin: 16px auto 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* Scroll Reveal Animation */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .reveal-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* CTA band with QR */
+    .cta-band {
+      margin-top: 120px;
+      background: var(--fg);
+      color: var(--bg);
+      border-radius: 28px;
+      padding: 56px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 40px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-band::before {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      right: -80px;
+      top: -120px;
+      background: radial-gradient(circle, rgba(42, 171, 238, 0.35), transparent 65%);
+      pointer-events: none;
+    }
+
+    .cta-band>* {
+      position: relative;
+    }
+
+    .cta-band .label {
+      color: rgba(243, 241, 237, 0.6);
+    }
+
+    .cta-band h2 {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(34px, 4.5vw, 52px);
+      line-height: 1.05;
+      margin: 12px 0 16px;
+    }
+
+    .cta-band h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .cta-band p {
+      color: rgba(243, 241, 237, 0.7);
+      max-width: 440px;
+      margin: 0 0 28px;
+    }
+
+    .cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .username-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font: 500 14px var(--mono);
+      color: var(--bg);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(243, 241, 237, 0.25);
+      border-radius: 8px;
+      padding: 11px 14px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .username-chip:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--bg);
+    }
+
+    .username-chip svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .qr-card {
+      justify-self: end;
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      color: var(--fg);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      transform: rotate(2deg);
+      transition: transform 0.3s;
+    }
+
+    .qr-card:hover {
+      transform: rotate(0) scale(1.03);
+    }
+
+    .qr-card img {
+      width: 180px;
+      height: 180px;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    .qr-card small {
+      display: block;
+      margin-top: 12px;
+      font: 500 12px var(--mono);
+      color: var(--muted);
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      margin-top: auto;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tr {
+      transition: background 0.2s;
+    }
+
+    tbody tr:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 500;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      background: var(--bg);
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      white-space: nowrap;
+    }
+
+    .tag.lent {
+      background: #e6f4ea;
+      color: #1e8e3e;
+      border-color: #ceead6;
+    }
+
+    .tag.income {
+      background: #e8f4fd;
+      color: #1D8FCB;
+      border-color: #cbe6f8;
+    }
+
+    .mono {
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    .chart-pie {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent) 0% 45%, #C9C3B8 45% 70%, #1F1C18 70% 100%);
+      margin: 0 auto 24px;
+    }
+
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    /* From Uiverse.io by Galahhad */
+    .search-label {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+      padding: 9px;
+      cursor: text;
+      flex: 1;
+      /* Added flex: 1 so it takes up space like the old input */
+    }
+
+    .search-label:hover {
+      border-color: var(--accent);
+    }
+
+    .search-label:focus-within {
+      background: var(--surface);
+      border-color: var(--accent);
+    }
+
+
+    .search-label input::placeholder {
+      color: var(--muted);
+      opacity: 1;
+    }
+
+    .search-label input {
+      outline: none;
+      width: 100%;
+      border: none;
+      background: none;
+      color: var(--fg);
+      font-family: var(--body);
+      font-size: 15px;
+    }
+
+    .search-label input:focus+.slash-icon,
+    .search-label input:valid+.slash-icon {
+      display: none;
+    }
+
+    .search-label input:valid~.search-icon {
+      display: block;
+    }
+
+    .search-label input:valid {
+      width: calc(100% - 22px);
+      transform: translateX(20px);
+    }
+
+    .search-label svg,
+    .slash-icon {
+      position: absolute;
+      color: var(--muted);
+    }
+
+    .search-icon {
+      display: none;
+      width: 12px;
+      height: auto;
+    }
+
+    .slash-icon {
+      right: 7px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      border-radius: 3px;
+      text-align: center;
+      box-shadow: inset 0 -2px 0 0 var(--line);
+      cursor: pointer;
+      font-size: 12px;
+      width: 15px;
+    }
+
+    .slash-icon:active {
+      box-shadow: inset 0 1px 0 0 #3f3f3f, inset 0 0 1px 1px rgb(94, 93, 93), 0 1px 2px 0 rgba(28, 28, 29, 0.4);
+      text-shadow: none;
+      color: transparent;
+      /* active */
+    }
+
+
+
+    /* ===== Responsive (homepage) ===== */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-block: 100px 48px;
+      }
+
+      .hero p {
+        margin: 0 auto 24px;
+      }
+
+      .hero-ctas {
+        justify-content: center;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bento-large,
+      .bento-tall {
+        grid-column: span 1;
+        grid-row: span 1;
+      }
+
+      .bento-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .media-demo {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .demo-section {
+        padding: 44px 20px;
+      }
+
+      .demo-input-wrap {
+        flex-direction: column;
+      }
+
+      .demo-input-wrap .btn {
+        align-self: center;
+      }
+
+      .cta-band {
+        grid-template-columns: 1fr;
+        padding: 40px 24px;
+        text-align: center;
+      }
+
+      .cta-band p {
+        margin-inline: auto;
+      }
+
+      .cta-actions {
+        justify-content: center;
+      }
+
+      .qr-card {
+        display: none;
+      }
+
+      /* scanning your own phone screen makes no sense */
+      .section-head,
+      .demo-section,
+      .cta-band {
+        margin-top: 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="toast-container" id="toast-container" role="status" aria-live="polite"></div>
+
+  <div class="container">
+    <header>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html" class="brand" aria-label="Money Mate home">
+          <img src="assets/img/logo-128.png" alt="" class="logo-icon" width="36" height="36">
+          <span>Money <i>Mate</i></span>
+        </a>
+        <div class="nav-links" id="nav-links">
+          <a href="#how-it-works">How it works</a>
+          <a href="#features">Features</a>
+          <a href="pages/Documentation.html">Docs</a>
+          <a href="pages/FAQ.html">FAQ</a>
+        </div>
+        <div class="nav-actions">
+          <a href="https://t.me/HeyMoneyMate_bot" class="btn tg-link" target="_blank" rel="noopener">Open Telegram</a>
+          <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"
+            aria-controls="nav-links">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="hero-text">
+          <div class="label">Telegram Bot · Free</div>
+          <h1>Log Expenses.<br>Just by <em>Chatting.</em></h1>
+          <p>Money Mate is a ridiculously fast AI expense tracker on Telegram. Send natural text, audio, or images — in
+            Hindi, Hinglish or English — and we organize your finances automatically.</p>
+
+          <div class="hero-ctas">
+            <a href="https://t.me/HeyMoneyMate_bot" class="btn tg-link" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                aria-hidden="true">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+              Start Chatting
+            </a>
+            <a href="pages/Documentation.html" class="btn ghost">Read Docs</a>
+          </div>
+          <div class="hero-note">No signup · No app install · Works in 10 seconds</div>
+        </div>
+
+        <!-- Right Side (Phone Frame) -->
+        <div class="hero-phone-wrap">
+          <div class="iphone-mockup" id="iphone3d" role="img"
+            aria-label="Animated preview of a Money Mate chat on Telegram">
+            <button type="button" class="iphone-btn silent" aria-label="Toggle silent mode (demo)"></button>
+            <button type="button" class="iphone-btn vol-up" aria-label="Volume up (demo)"></button>
+            <button type="button" class="iphone-btn vol-down" aria-label="Volume down (demo)"></button>
+            <button type="button" class="iphone-btn power" aria-label="Power (demo)"></button>
+            <div class="iphone-notch">
+              <div class="iphone-camera"></div>
+              <div class="iphone-speaker"></div>
+            </div>
+            <div class="iphone-screen">
+
+              <!-- Dynamic iOS Status Bar -->
+              <div class="ios-status-bar" id="ios-status-bar">
+                <div class="ios-time" id="ios-time">9:41</div>
+                <div class="ios-icons">
+                  <svg viewBox="0 0 24 24" class="ios-signal" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 17H3" />
+                    <path d="M17 11v6" />
+                    <path d="M13 17v-8" />
+                    <path d="M9 17V5" />
+                  </svg>
+                  <span id="ios-signal-text"
+                    style="display:none; font-size:11px; margin-right:2px; font-weight:700;">LTE</span>
+                  <svg viewBox="0 0 24 24" class="ios-wifi" id="ios-wifi-icon" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                    <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                  </svg>
+                  <div class="ios-battery">
+                    <div class="ios-battery-level" id="ios-battery-level"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="screen-overlay" id="screen-overlay"></div>
+              <div class="silent-hud" id="silent-hud">
+                <svg id="silent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"
+                  aria-hidden="true"></svg>
+                <span id="silent-text">Silent Mode</span>
+              </div>
+              <div class="volume-hud" id="volume-hud">
+                <div class="volume-bar" id="volume-bar"></div>
+              </div>
+
+              <div class="ios-notification" id="ios-noti">
+                <img src="assets/img/logo-128.png" alt="">
+                <div class="ios-text">
+                  <b>Money Mate</b>
+                  <span>Expense logged successfully</span>
+                </div>
+              </div>
+
+              <div class="iphone-glare"></div>
+              <div class="telegram-app">
+                <div class="telegram-header-floating">
+                  <div class="floating-circle">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                  </div>
+                  <div class="floating-pill">
+                    <img src="assets/img/logo-128.png" alt="MoneyMate">
+                    <div class="floating-pill-text">
+                      <b>MoneyMate❤️</b>
+                      <small>bot</small>
+                    </div>
+                  </div>
+                  <div class="floating-circle">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="1.5"></circle>
+                      <circle cx="12" cy="5" r="1.5"></circle>
+                      <circle cx="12" cy="19" r="1.5"></circle>
+                    </svg>
+                  </div>
+                </div>
+                <div class="chat" id="chat-container">
+                  <!-- Dynamically populated -->
+                </div>
+                <div class="telegram-bottom-floating" aria-hidden="true">
+                  <div class="menu-btn">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round">
+                      <line x1="3" y1="12" x2="21" y2="12"></line>
+                      <line x1="3" y1="6" x2="21" y2="6"></line>
+                      <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                    Menu
+                  </div>
+                  <div class="chat-input-field">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                      <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                      <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                    </svg>
+                    <span style="flex:1;">Message</span>
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path
+                        d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                      </path>
+                    </svg>
+                  </div>
+                  <div class="mic-btn">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                      <path
+                        d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6.93 6.93V21h1.14v-3.07A7 7 0 0 0 19 11h-2z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="home-indicator"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trust strip (keep claims factual — add real user counts/testimonials once available) -->
+      <div class="trust-strip">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z" />
+          </svg>AI-powered parsing</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>Hindi · Hinglish · English</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>No ads · Data never sold</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>Export to CSV anytime</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>Free core features</span>
+      </div>
+
+      <!-- How it works -->
+      <section id="how-it-works" aria-labelledby="how-title">
+        <div class="section-head">
+          <div class="label">How it works</div>
+          <h2 id="how-title">Up and running in <em>10 seconds.</em></h2>
+          <p>No forms, no spreadsheets, no new app. If you can send a message, you can track money.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">STEP 01</span>
+            <h3>Open the bot</h3>
+            <p>Search <b>@HeyMoneyMate_bot</b> in Telegram, or tap any “Open Telegram” button on this page.</p>
+          </div>
+          <div class="step">
+            <span class="step-num">STEP 02</span>
+            <h3>Say hello</h3>
+            <p>Send <code>/start</code>. Your private ledger is created instantly — no email or password.</p>
+            <span class="bubble"><code>/start</code></span>
+          </div>
+          <div class="step">
+            <span class="step-num">STEP 03</span>
+            <h3>Just chat</h3>
+            <p>Type, speak or snap a bill. Money Mate figures out the amount, category and people.</p>
+            <span class="bubble">Chai 20, auto 50 🛺</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" aria-labelledby="features-title">
+        <div class="section-head">
+          <div class="label">Features</div>
+          <h2 id="features-title">Everything you need. <em>Nothing you don't.</em></h2>
+        </div>
+
+        <div class="bento-grid">
+          <div class="bento-card bento-large">
+            <div class="label" style="margin-bottom: 8px;">AI Parsing</div>
+            <h3>Understands anything</h3>
+            <p>Type normally in any format. Money Mate extracts the intent, amount, and context instantly.</p>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">You Say</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Category</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>"Uber ke liye 500 diye"</td>
+                    <td><span class="tag">Expense</span></td>
+                    <td class="mono">₹500</td>
+                    <td>Transport</td>
+                  </tr>
+                  <tr>
+                    <td>"Rahul ko 2000 udhaar diye"</td>
+                    <td><span class="tag lent">Lent</span></td>
+                    <td class="mono">₹2,000</td>
+                    <td>Ledger</td>
+                  </tr>
+                  <tr>
+                    <td>"Salary aayi 45k"</td>
+                    <td><span class="tag income">Income</span></td>
+                    <td class="mono">₹45,000</td>
+                    <td>Salary</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="bento-card">
+            <div class="label" style="margin-bottom: 8px;">Visual Reports</div>
+            <h3>Beautiful Analytics</h3>
+            <p>Type /report anytime to get categorized breakdowns.</p>
+            <div class="chart-pie" role="img" aria-label="Example pie chart: Food 45%, Travel 25%, Subscriptions 30%">
+            </div>
+            <div class="chart-legend">
+              <span><b style="color:var(--accent);">●</b> Food</span>
+              <span><b style="color:#C9C3B8;">●</b> Travel</span>
+              <span><b style="color:var(--fg);">●</b> Subs</span>
+            </div>
+          </div>
+          <div class="bento-card bento-tall">
+            <div class="label" style="margin-bottom: 8px;">Smart Ledger</div>
+            <h3>Never forget IOUs</h3>
+            <p>Money Mate keeps a running tally of who owes you, and who you owe. Type /ledger to see it anytime.</p>
+            <div class="ledger-box">
+              <div class="ledger-row"><span>Rahul</span> <b>Owes you ₹2,000</b></div>
+              <div class="ledger-row"><span>Aman</span> <b>Owes you ₹500</b></div>
+              <div class="ledger-row"><span>Priya</span> <b>You owe ₹300</b></div>
+            </div>
+          </div>
+          <div class="bento-card bento-large bento-row">
+            <div>
+              <div class="label" style="margin-bottom: 8px;">Data Ownership</div>
+              <h3>Export Anywhere</h3>
+              <p style="max-width: 300px;">Your data is yours. Download detailed CSV sheets instantly via chat.</p>
+            </div>
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1"
+              style="opacity:0.3; flex-shrink:0;" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="8" y1="13" x2="16" y2="13"></line>
+              <line x1="8" y1="17" x2="16" y2="17"></line>
+              <line x1="10" y1="9" x2="8" y2="9"></line>
+            </svg>
+          </div>
+          <div class="bento-card bento-large bento-row">
+            <div>
+              <div class="label" style="margin-bottom: 8px;">Voice &amp; Photos</div>
+              <h3>Speak it. Snap it.</h3>
+              <p style="max-width: 320px;">Too lazy to type? Send a voice note or a photo of the bill — Money Mate
+                transcribes, reads and logs it for you.</p>
+            </div>
+            <div class="media-demo" aria-hidden="true">
+              <div class="media-pill voice-msg">
+                <div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg></div>
+                <div class="waveform"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <div class="receipt">
+                <div><span>Cold Coffee ×2</span><span>₹280</span></div>
+                <div><span>Sandwich</span><span>₹160</span></div>
+                <div class="total"><span>TOTAL</span><span>₹440</span></div>
+              </div>
+              <span class="logged">✓ Logged · Food &amp; Drinks</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive demo -->
+      <section class="demo-section" aria-labelledby="demo-title">
+        <div class="label" style="margin-bottom: 12px;">Try it out</div>
+        <h2 class="section-title" id="demo-title">Test the AI Parser</h2>
+        <p class="demo-sub">Type an expense the way you'd text a friend — or tap an example below.</p>
+        <form class="demo-input-wrap" id="demo-form">
+          <label class="search-label">
+            <span class="sr-only">Describe an expense</span>
+            <input type="text" id="demo-input" name="text" class="input" required placeholder="Type here..."
+              value="Spent 400 on movie tickets" autocomplete="off" maxlength="200">
+            <kbd class="slash-icon">/</kbd>
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" version="1.1"
+              xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0"
+              viewBox="0 0 56.966 56.966" style="enable-background:new 0 0 512 512" xml:space="preserve"
+              aria-hidden="true">
+              <g>
+                <path
+                  d="M55.146 51.887 41.588 37.786A22.926 22.926 0 0 0 46.984 23c0-12.682-10.318-23-23-23s-23 10.318-23 23 10.318 23 23 23c4.761 0 9.298-1.436 13.177-4.162l13.661 14.208c.571.593 1.339.92 2.162.92.779 0 1.518-.297 2.079-.837a3.004 3.004 0 0 0 .083-4.242zM23.984 6c9.374 0 17 7.626 17 17s-7.626 17-17 17-17-7.626-17-17 7.626-17 17-17z"
+                  fill="currentColor" data-original="#000000" class=""></path>
+              </g>
+            </svg>
+          </label>
+          <button class="btn" type="submit" id="demo-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" x2="11" y1="2" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            Parse Text
+          </button>
+        </form>
+        <div class="demo-chips" aria-label="Example messages">
+          <button type="button" class="chip">Chai 20 aur samosa 30</button>
+          <button type="button" class="chip">Rahul ko 1,500 udhaar diye</button>
+          <button type="button" class="chip">Salary aayi 45k</button>
+          <button type="button" class="chip">Aman ne 200 wapas kiye</button>
+          <button type="button" class="chip">Electricity bill ₹1,240.50</button>
+        </div>
+        <div class="demo-output" id="demo-output" aria-live="polite">
+          <span style="color:var(--muted)">JSON output will appear here...</span>
+        </div>
+        <p class="demo-disclaimer">This is a simplified in-browser preview. The real bot uses a full AI model and
+          understands much more.</p>
+      </section>
+
+      <!-- Final CTA with QR -->
+      <section class="cta-band" aria-labelledby="cta-title">
+        <div>
+          <div class="label">Get started — it's free</div>
+          <h2 id="cta-title">Your money, <em>one chat away.</em></h2>
+          <p>Open Money Mate on Telegram and log your first expense in under 10 seconds. On desktop? Scan the code with
+            your phone.</p>
+          <div class="cta-actions">
+            <a href="https://t.me/HeyMoneyMate_bot" class="btn accent tg-link" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                aria-hidden="true">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+              </svg>
+              Open in Telegram
+            </a>
+            <button type="button" class="username-chip" id="copy-username"
+              aria-label="Copy bot username @HeyMoneyMate_bot">
+              @HeyMoneyMate_bot
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="qr-card">
+          <img src="assets/img/qr-telegram.svg" alt="QR code linking to t.me/HeyMoneyMate_bot" width="180" height="180"
+            loading="lazy">
+          <small>SCAN TO OPEN</small>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand" style="font-size: 20px;">
+            <img src="assets/img/logo-128.png" alt="" class="logo-icon"
+              style="width: 28px; height: 28px; border-radius: 8px;">
+            <span>Money <i>Mate</i></span>
+          </div>
+          <p>AI Native Expense Tracking built for Telegram. Just chat and log expenses instantly without installing
+            another app.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <a href="pages/Documentation.html">Documentation</a>
+          <a href="pages/FAQ.html">FAQ</a>
+          <a href="https://t.me/HeyMoneyMate_bot" class="tg-link" target="_blank" rel="noopener">Open Telegram</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="pages/Privacy.html">Privacy Policy</a>
+          <a href="pages/Terms.html">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; <span data-year>2026</span> Money Mate. All rights reserved.</span>
+        <span>Made with ❤️ for Telegram.</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      // Haptic feedback helper — browsers only allow vibration after the user
+      // has interacted with the page, so we check that first (avoids console errors).
+      function triggerHaptic(pattern = 15) {
+        const activated = !navigator.userActivation || navigator.userActivation.hasBeenActive;
+        if (navigator.vibrate && activated) {
+          try { navigator.vibrate(pattern); } catch (e) { /* ignore */ }
+        }
+      }
+
+      // ---------- Scroll Reveal Observer ----------
+      if ('IntersectionObserver' in window) {
+        const scrollObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+              entry.target.classList.add('visible');
+              triggerHaptic(80);
+              scrollObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.bento-card, .step, .demo-section, .cta-band').forEach(el => {
+          el.classList.add('reveal-on-scroll');
+          scrollObserver.observe(el);
+        });
+      }
+
+      // ---------- Interactive Demo (Idea 1) ----------
+      // A lightweight, rule-based preview of what the real AI bot does.
+      const CATEGORY_RULES = [
+        ['Entertainment', ['movie', 'netflix', 'prime', 'hotstar', 'spotify', 'concert', 'pvr', 'inox', 'party', 'game', 'show']],
+        ['Food & Drinks', ['food', 'coffee', 'chai', 'tea', 'lunch', 'dinner', 'breakfast', 'burger', 'pizza', 'samosa', 'zomato', 'swiggy', 'snack', 'restaurant', 'cafe', 'biryani', 'khana', 'nashta']],
+        ['Groceries', ['grocery', 'groceries', 'sabzi', 'vegetable', 'fruit', 'milk', 'doodh', 'blinkit', 'zepto', 'bigbasket', 'kirana']],
+        ['Transport', ['uber', 'ola', 'rapido', 'cab', 'auto', 'petrol', 'diesel', 'fuel', 'metro', 'bus', 'train', 'flight', 'ticket', 'parking', 'toll']],
+        ['Bills & Utilities', ['bill', 'electricity', 'bijli', 'recharge', 'wifi', 'internet', 'rent', 'kiraya', 'emi']],
+        ['Shopping', ['amazon', 'flipkart', 'myntra', 'shirt', 'shoes', 'clothes', 'kapde', 'shopping']],
+        ['Health', ['medicine', 'dawai', 'doctor', 'pharmacy', 'gym', 'hospital']]
+      ].map(([name, words]) => [name, new RegExp('\\b(?:' + words.join('|') + ')', 'i')]);
+
+      // Supports: $500, 500$, €50, ₹500, Rs 500, 1,500, 1,00,000, 99.50, 1.5k, 2 lakh
+      const AMOUNT_RE = /(?:₹|\$|€|£|rs\.?|inr|usd)?\s*(\d{1,3}(?:,\d{2,3})+|\d+)(?:\.(\d{1,2}))?(?:\s*(k|lakh|lac)\b)?(?:\s*(?:₹|\$|€|£|inr|usd))?/gi;
+
+      function parseAmounts(text) {
+        const out = [];
+        for (const m of text.matchAll(AMOUNT_RE)) {
+          let n = parseFloat(m[1].replace(/,/g, '') + (m[2] ? '.' + m[2] : ''));
+          const unit = (m[3] || '').toLowerCase();
+          if (unit === 'k') n *= 1000;
+          else if (unit === 'lakh' || unit === 'lac') n *= 100000;
+          out.push(Math.round(n * 100) / 100);
+        }
+        return out;
+      }
+
+      function detectIntent(l) {
+        if (/(paid (me )?back|wapas|waapas|returned|lauta|settle|vasool)/.test(l)) return 'settlement';
+        if (/(borrow|udh?aa?r (liye|liya|li)\b|\b(se|from)\b.*\b(liye|liya|li|took)\b)/.test(l)) return 'borrowed';
+        if (/(\blent\b|udh?aa?r|\bgave\b.*\bto\b|\b(ko|se|to)\b.*\b(diye|diya|di|gave)\b)/.test(l)) return 'lent';
+        if (/(salary|received|credited|income|got paid|refund|\baaye\b|\baayi\b|\baaya\b|\bmila\b|\bmile\b)/.test(l)) return 'income';
+        return 'expense';
+      }
+
+      const NOT_A_PERSON = new Set(['i', 'he', 'she', 'they', 'we', 'you', 'the', 'a', 'an', 'my', 'his', 'her', 'and', 'aur', 'ko', 'se', 'ne', 'to', 'from', 'with', 'spent', 'gave', 'paid', 'bought', 'got', 'received', 'salary', 'uber', 'ola', 'bhai', 'aaj', 'today', 'movie', 'chai', 'lent', 'borrowed', 'electricity', 'bill']);
+      function findPerson(text) {
+        const patterns = [/\b(?:to|from|with)\s+([a-zA-Z]+)/i, /\b([a-zA-Z]+)\s+(?:ko|se|ne|paid|returned|gave)\b/i];
+        for (const p of patterns) {
+          const m = text.match(p);
+          if (m && !NOT_A_PERSON.has(m[1].toLowerCase())) {
+            return m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+          }
+        }
+        return 'Someone';
+      }
+
+      function detectCurrency(text) {
+        const l = text.toLowerCase();
+        if (/\$|usd|bucks/.test(l)) return 'USD';
+        if (/€|eur|euro/.test(l)) return 'EUR';
+        if (/£|gbp|pound/.test(l)) return 'GBP';
+        return 'INR';
+      }
+
+      function parseExpense(text) {
+        const lower = text.toLowerCase();
+        const intent = detectIntent(lower);
+        const amounts = parseAmounts(text);
+        const isList = amounts.length > 1 && /(\baur\b|\band\b|\bplus\b|\+|,\s*[a-z])/i.test(text);
+        const amount = amounts.length ? (isList ? amounts.reduce((a, b) => a + b, 0) : amounts[0]) : null;
+        const currency = detectCurrency(text);
+
+        let category = null;
+        if (intent === 'expense') {
+          const hit = CATEGORY_RULES.find(([, re]) => re.test(lower));
+          category = hit ? hit[0] : 'Miscellaneous';
+        } else if (intent === 'income') {
+          category = /salary/.test(lower) ? 'Salary' : 'Income';
+        } else {
+          category = 'Ledger';
+        }
+
+        const result = { intent, amount, currency, category };
+        if (isList) result.items = amounts;
+        if (intent !== 'expense' && intent !== 'income') result.person = findPerson(text);
+        result.date = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+        if (amount === null) result.note = 'No amount found — try adding a number';
+        result.raw = text;
+        return result;
+      }
+
+      function escapeHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      // Escape first, then add syntax-highlight spans — user input can never become HTML.
+      function highlightJson(obj) {
+        const json = escapeHtml(JSON.stringify(obj, null, 2));
+        return json.replace(/("(?:\\.|[^"\\])*")(\s*:)?|\b(-?\d+(?:\.\d+)?)\b|\b(true|false|null)\b/g, (m, str, colon, num, lit) => {
+          if (str) return colon ? `<span class="j-key">${str}</span>${colon}` : `<span class="j-str">${str}</span>`;
+          if (num) return `<span class="j-num">${num}</span>`;
+          return `<span class="j-lit">${lit}</span>`;
+        });
+      }
+
+      const demoForm = document.getElementById('demo-form');
+      const demoInput = document.getElementById('demo-input');
+      const demoOut = document.getElementById('demo-output');
+      const demoBtn = document.getElementById('demo-btn');
+
+      function runDemo() {
+        const input = demoInput.value.trim();
+        if (!input) return;
+        demoBtn.disabled = true;
+        demoOut.innerHTML = '<div class="skeleton"></div><div class="skeleton" style="width:70%"></div><div class="skeleton" style="width:40%"></div>';
+        const result = parseExpense(input);
+
+        // Trigger the iPhone chat interaction
+        if (typeof addLiveChatMsg === 'function') {
+          addLiveChatMsg(input, result);
+        }
+
+        setTimeout(() => {
+          demoOut.innerHTML = '<pre>' + highlightJson(result) + '</pre>';
+          demoBtn.disabled = false;
+          triggerHaptic(120);
+        }, 900);
+      }
+
+      demoForm.addEventListener('submit', (e) => { e.preventDefault(); runDemo(); });
+      document.querySelectorAll('.demo-chips .chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          demoInput.value = chip.textContent;
+          runDemo();
+        });
+      });
+
+      // "/" shortcut focuses the demo input (matches the keyboard hint inside it)
+      document.addEventListener('keydown', (e) => {
+        const tag = (document.activeElement && document.activeElement.tagName) || '';
+        if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(tag)) {
+          e.preventDefault();
+          demoInput.focus();
+          demoInput.select();
+        }
+      });
+
+      // ---------- Copy username button ----------
+      const copyBtn = document.getElementById('copy-username');
+      copyBtn.addEventListener('click', () => {
+        const name = '@HeyMoneyMate_bot';
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(name)
+            .then(() => showToast('Copied ' + name + ' — paste it in Telegram search'))
+            .catch(() => showToast('Search ' + name + ' in Telegram'));
+        } else {
+          showToast('Search ' + name + ' in Telegram');
+        }
+      });
+
+      // ---------- Hardware Buttons Interactivity ----------
+      let isScreenOff = false;
+      document.querySelector('.iphone-btn.power').addEventListener('click', () => {
+        triggerHaptic(120);
+        isScreenOff = !isScreenOff;
+        document.getElementById('screen-overlay').classList.toggle('off', isScreenOff);
+      });
+
+      let volumeLevel = 50;
+      let volTimeout;
+      const volHud = document.getElementById('volume-hud');
+      const volBar = document.getElementById('volume-bar');
+
+      function showVolume(change) {
+        if (isScreenOff) return;
+        volumeLevel = Math.max(0, Math.min(100, volumeLevel + change));
+        volBar.style.height = volumeLevel + '%';
+        volHud.classList.add('show');
+        clearTimeout(volTimeout);
+        volTimeout = setTimeout(() => {
+          volHud.classList.remove('show');
+        }, 2000);
+      }
+      document.querySelector('.iphone-btn.vol-up').addEventListener('click', () => { triggerHaptic(100); showVolume(10); });
+      document.querySelector('.iphone-btn.vol-down').addEventListener('click', () => { triggerHaptic(100); showVolume(-10); });
+
+      let isSilent = false;
+      let silentTimeout;
+      const silentHud = document.getElementById('silent-hud');
+      const silentText = document.getElementById('silent-text');
+      const silentIcon = document.getElementById('silent-icon');
+
+      const iconBell = `<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>`;
+      const iconSilent = `<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path><line x1="2" y1="2" x2="22" y2="22" stroke="#ff453a"></line>`;
+
+      document.querySelector('.iphone-btn.silent').addEventListener('click', () => {
+        if (isScreenOff) return;
+        triggerHaptic([100, 150, 100]);
+        isSilent = !isSilent;
+        silentText.innerText = isSilent ? 'Silent Mode On' : 'Silent Mode Off';
+        silentText.style.color = isSilent ? '#ff453a' : '#fff';
+        silentIcon.innerHTML = isSilent ? iconSilent : iconBell;
+        silentIcon.style.color = isSilent ? '#ff453a' : '#fff';
+
+        silentHud.classList.add('show');
+        clearTimeout(silentTimeout);
+        silentTimeout = setTimeout(() => {
+          silentHud.classList.remove('show');
+        }, 2500);
+      });
+
+      // ---------- Chat Animation (Idea 2 & 9) ----------
+      const chatData = [
+        { type: 'bot', content: '<b>What can this bot do?</b><br><br>💸 <b>MoneyMate turns everyday chat into a clean expense record.</b><br><br>Just type naturally:<br>• "spent 20 on a water bottle"<br>• "lent 1000 to Rahul"<br>• "Rahul paid back 800"<br><br>✅ Logs amount, category, exact date &amp; time<br>🤝 Tracks who owes you and whom you owe<br>📊 Sends a private link to your monthly report<br>🗣 Understands English and Hinglish<br><br><b>No forms. No extra app. Just chat.</b>', time: '', instant: true },
+        { type: 'date', text: 'October 3', instant: true },
+        { type: 'me', text: 'Rahul ko 1000 udhaar diye', time: '8:18 PM' },
+        { type: 'bot', content: '<b>✅ Saved</b><br>Lent out ₹1,000 to Rahul.', time: '8:18 PM' },
+        { type: 'me', voice: true, duration: '0:04', time: '8:25 PM' },
+        { type: 'bot', content: '🎤 <i>"Chai aur samosa, 60 rupaye"</i><br><b>✅ ₹60 · Food &amp; Drinks</b>', time: '8:25 PM' }
+      ];
+
+      const chatContainer = document.getElementById('chat-container');
+
+      function createVoiceMsg() {
+        return `<div class="voice-msg"><div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div><div class="waveform"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>`;
+      }
+
+      async function playChat() {
+        chatContainer.innerHTML = '';
+
+        for (let msg of chatData) {
+          if (msg.type === 'date') {
+            const d = document.createElement('div');
+            d.className = 'date-pill';
+            d.innerText = msg.text;
+            chatContainer.appendChild(d);
+            continue;
+          }
+
+          if (msg.type === 'bot' && !msg.instant) {
+            // Skeleton loader (Idea 9)
+            const typing = document.createElement('div');
+            typing.className = 'msg bot';
+            typing.innerHTML = '<div class="skeleton" style="width:100px;"></div><div class="skeleton" style="width:160px;"></div>';
+            chatContainer.appendChild(typing);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            await new Promise(r => setTimeout(r, 1200));
+            typing.remove();
+
+            // Trigger iOS Notification after first save
+            if (msg.content && msg.content.includes("Saved")) {
+              setTimeout(() => {
+                const noti = document.getElementById('ios-noti');
+                if (noti) {
+                  noti.classList.add('show');
+                  setTimeout(() => noti.classList.remove('show'), 3500);
+                }
+              }, 800);
+            }
+          } else if (!msg.instant) {
+            await new Promise(r => setTimeout(r, 1200));
+          }
+
+          const div = document.createElement('div');
+          div.className = `msg ${msg.type}`;
+          if (msg.instant) {
+            div.style.animationDuration = '0s';
+          }
+
+          let content = msg.voice ? createVoiceMsg() : (msg.text || msg.content);
+          if (msg.time) {
+            div.style.paddingRight = '60px'; // Prevent short text from overlapping timestamp
+            div.style.minWidth = '80px';
+            div.innerHTML = content + `<div class="msg-info"><time>${msg.time}</time></div>`;
+          } else {
+            div.innerHTML = content;
+            div.style.paddingBottom = '14px'; // less padding if no time
+          }
+          chatContainer.appendChild(div);
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      }
+
+      // Initial play
+      playChat();
+
+      // ---------- Dynamic Live iPhone Features ----------
+
+      // 1. Dark Mode Toggle via Notch
+      document.querySelector('.iphone-notch').addEventListener('click', () => {
+        triggerHaptic(80);
+        const screen = document.querySelector('.iphone-screen');
+        screen.classList.toggle('dark-mode');
+
+        // Add dynamic inline styles if not present in CSS
+        if (!document.getElementById('dark-mode-style')) {
+          const style = document.createElement('style');
+          style.id = 'dark-mode-style';
+          style.innerHTML = `
+        .iphone-screen.dark-mode { background: #1a1a1a; }
+        .iphone-screen.dark-mode .phone-head { background: #222; border-bottom: 1px solid #333; color: #fff; box-shadow: none; }
+        .iphone-screen.dark-mode .phone-head b { color: #fff; }
+        .iphone-screen.dark-mode .chat-input-bar { background: #222; border-top: 1px solid #333; }
+        .iphone-screen.dark-mode .chat-input-field { background: #333; color: #eee; border-color: #444; }
+        .iphone-screen.dark-mode .msg.bot { background: #333; color: #fff; }
+        .iphone-screen.dark-mode .msg.me { background: #0b4a3b; color: #fff; }
+        .iphone-screen.dark-mode .chat { background: linear-gradient(135deg, #1f2c27 0%, #17241e 100%); }
+      `;
+          document.head.appendChild(style);
+        }
+      });
+
+      // 2. Confetti Effect
+      function triggerConfetti() {
+        const chat = document.getElementById('chat-container');
+        for (let i = 0; i < 30; i++) {
+          const conf = document.createElement('div');
+          conf.style.position = 'absolute';
+          conf.style.width = '8px';
+          conf.style.height = '8px';
+          conf.style.backgroundColor = ['#ff453a', '#32d74b', '#0a84ff', '#ffd60a'][Math.floor(Math.random() * 4)];
+          conf.style.left = (Math.random() * 100) + '%';
+          conf.style.top = '100%';
+          conf.style.zIndex = '50';
+          conf.style.borderRadius = (Math.random() > 0.5 ? '50%' : '2px');
+          conf.style.transition = 'all 1s cubic-bezier(0.25, 1, 0.5, 1)';
+          chat.appendChild(conf);
+
+          // Animate
+          setTimeout(() => {
+            conf.style.top = (Math.random() * 70) + '%';
+            const throwX = (Math.random() - 0.5) * 100;
+            conf.style.transform = `translate(${throwX}px, 0) scale(0) rotate(${Math.random() * 360}deg)`;
+            conf.style.opacity = '0';
+          }, 50);
+          setTimeout(() => conf.remove(), 1100);
+        }
+      }
+
+      // 3. Connect Demo Input to iPhone Screen
+      window.addLiveChatMsg = async function (text, jsonResult) {
+        const now = new Date();
+        const timeStr = (now.getHours() % 12 || 12) + ':' + String(now.getMinutes()).padStart(2, '0') + (now.getHours() >= 12 ? ' PM' : ' AM');
+
+        // Add user message
+        const meDiv = document.createElement('div');
+        meDiv.className = 'msg me';
+        meDiv.style.paddingRight = '60px';
+        meDiv.style.minWidth = '80px';
+        meDiv.innerHTML = text + `<div class="msg-info"><time>${timeStr}</time></div>`;
+        chatContainer.appendChild(meDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Show typing skeleton
+        const typing = document.createElement('div');
+        typing.className = 'msg bot';
+        typing.innerHTML = '<div class="skeleton" style="width:100px;"></div><div class="skeleton" style="width:160px;"></div>';
+        chatContainer.appendChild(typing);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        await new Promise(r => setTimeout(r, 900));
+        typing.remove();
+
+        // Add bot response
+        const botDiv = document.createElement('div');
+        botDiv.className = 'msg bot';
+        botDiv.style.paddingRight = '60px';
+        botDiv.style.minWidth = '80px';
+
+        let botHtml = '';
+        const sym = { 'USD': '$', 'EUR': '€', 'GBP': '£', 'INR': '₹' }[jsonResult.currency] || '₹';
+
+        if (jsonResult.type === 'expense' || jsonResult.intent === 'expense') {
+          botHtml = `<b>✅ ${sym}${jsonResult.amount} · ${jsonResult.category}</b>`;
+        } else if (jsonResult.intent === 'lent' || jsonResult.intent === 'borrowed' || jsonResult.intent === 'settlement') {
+          botHtml = `<b>✅ Ledger Updated</b><br>Amount: ${sym}${jsonResult.amount} (${jsonResult.person})`;
+        } else if (jsonResult.intent === 'income') {
+          botHtml = `<b>🎉 Income Logged</b><br>${sym}${jsonResult.amount} (${jsonResult.category})`;
+          triggerConfetti();
+        } else {
+          botHtml = `<b>✅ Logged</b><br>Amount: ${sym}${jsonResult.amount}`;
+        }
+
+        botDiv.innerHTML = botHtml + `<div class="msg-info"><time>${timeStr}</time></div>`;
+        chatContainer.appendChild(botDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        triggerHaptic([80, 120, 80]);
+
+        // Show iOS notification
+        const noti = document.getElementById('ios-noti');
+        if (noti) {
+          noti.querySelector('span').innerText = 'Expense tracked via web preview';
+          noti.classList.add('show');
+          setTimeout(() => noti.classList.remove('show'), 3000);
+        }
+      };
+
+      // --- Dynamic iOS Status Bar Logic ---
+      function updateIosStatusBar() {
+        const timeEl = document.getElementById('ios-time');
+        const batteryEl = document.getElementById('ios-battery-level');
+
+        // Time
+        if (timeEl) {
+          const d = new Date();
+          let h = d.getHours();
+          let m = d.getMinutes();
+          h = h % 12 || 12;
+          m = m < 10 ? '0' + m : m;
+          timeEl.innerText = `${h}:${m}`;
+        }
+
+        // Battery API
+        if (batteryEl && navigator.getBattery) {
+          navigator.getBattery().then(batt => {
+            const updateBatt = () => {
+              batteryEl.style.width = (batt.level * 100) + '%';
+              if (batt.level < 0.2 && !batt.charging) batteryEl.style.background = '#ff3b30'; // Red when low
+              else if (batt.charging) batteryEl.style.background = '#34c759'; // Green when charging
+              else batteryEl.style.background = 'currentColor'; // Normal
+            };
+            updateBatt();
+            batt.addEventListener('levelchange', updateBatt);
+            batt.addEventListener('chargingchange', updateBatt);
+          });
+        } else if (batteryEl) {
+          batteryEl.style.width = '100%';
+        }
+
+        // Network API
+        const wifiIcon = document.getElementById('ios-wifi-icon');
+        const signalText = document.getElementById('ios-signal-text');
+        if (navigator.connection && wifiIcon && signalText) {
+          const type = navigator.connection.type || navigator.connection.effectiveType;
+          if (type && (type.includes('g') || type === 'cellular')) {
+            wifiIcon.style.display = 'none';
+            signalText.innerText = type.toUpperCase() === '4G' ? 'LTE' : '5G';
+            signalText.style.display = 'inline-block';
+          }
+        }
+      }
+      updateIosStatusBar();
+      setInterval(updateIosStatusBar, 30000); // Update every 30s
+    })();
+  </script>
+
+</body>
+
+</html>

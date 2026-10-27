@@ -8,6 +8,7 @@ This repository contains the sleek, highly interactive, and responsive frontend 
 
 ## Features ✨
 - **Hyper-Realistic iPhone Mockup:** Fully interactive hardware buttons (Power, Volume HUD, Silent Switch dropdown) built purely with CSS and JS.
+- **Statement Image (Aapka Hisaab):** Generates clean, branded, high-resolution mini-statement images right in Telegram chat using Playwright headless rendering with Indian currency formatting (`₹1,00,000`), breakdown cards (Total Kharcha, Udhaar Diya, Wapas Mila, Baaki), and active udhaar pending strip.
 - **Scroll-triggered Haptic Feedback:** Uses the Web Vibration API (after the first user interaction, as browsers require) on supported devices.
 - **Interactive Parsing Demo:** Type an expense in Hindi, Hinglish or English and watch an in-browser preview parse the intent, amount (₹, commas, `k`/`lakh`), category and people. Press Enter, `/` to focus, or tap an example chip.
 - **How it works + QR code:** 3-step onboarding and a scannable QR for desktop visitors.
@@ -27,6 +28,15 @@ This repository contains the sleek, highly interactive, and responsive frontend 
 - `logo.png` (original, 1024px) · `logo-512.png` (social previews) · `logo-128.png` (favicon/UI).
 - `qr-telegram.svg` - QR code for `https://t.me/HeyMoneyMate_bot`.
 - `vercel.json` - Clean URLs, caching and security headers.
+
+## Telegram Bot & Statement Generation 🤖
+MoneyMate includes a full-featured Telegram bot located in `bot/`:
+- **Natural Language Parsing:** Log expenses and lending (udhaar) using natural Hinglish (e.g. `20 ki water bottle`, `Rahul ko 1000 diye`).
+- **Statement Generation (`/statement` or `/hisab`):**
+  - **Quick Ranges:** Today (`aaj`), This Week (`week` / default 7 days), This Month (`month`), Previous Month (`prev_month`).
+  - **Inline Actions:** Switch ranges with a single tap or download the uncompressed original document (`Original Document`).
+  - **Devanagari (Hindi) Support:** Pre-configured with fallback to `Nirmala UI` and `Noto Sans Devanagari` to prevent tofu/boxes.
+  - **Testing & Previews:** Run `python bot/test_render_statement.py` to generate sample statement PNGs into the `preview/` folder.
 
 ## Deployment 🚀
 This project is deployment-ready for platforms like Vercel, Netlify, or GitHub Pages. The main entry point is configured as `index.html`.

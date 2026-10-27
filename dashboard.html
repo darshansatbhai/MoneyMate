@@ -212,6 +212,19 @@
         </div>
 
         <div id="dashboard-content" style="display: none;">
+            <div id="demo-banner" style="display: none; background: rgba(79, 70, 229, 0.12); border: 1px solid rgba(79, 70, 229, 0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 1.5rem; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.2rem;">✨</span>
+                    <span style="font-size: 0.95rem; color: #1e1b4b; font-weight: 500;">
+                        <b>Preview Mode</b> · Showing sample interactive transactions.
+                    </span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input id="custom-token-input" placeholder="Paste live token..." style="padding: 7px 12px; border-radius: 8px; border: 1px solid #c7d2fe; font-size: 13px; background: white; outline: none; width: 180px;" />
+                    <button onclick="loadCustomToken()" style="padding: 7px 14px; background: #4F46E5; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;">Load Live Data</button>
+                </div>
+            </div>
+
             <div class="summary-grid">
                 <div class="stat-box">
                     <div class="stat-title">Total Income</div>
@@ -262,12 +275,42 @@
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        const DEMO_TRANSACTIONS = [
+            { id: "1", amount: 45000, category: "Salary", transaction_type: "income", description: "Monthly Salary Credited", created_at: new Date(Date.now() - 86400000 * 1).toISOString() },
+            { id: "2", amount: 850, category: "Food", transaction_type: "expense", description: "Dinner with Friends at Cafe", created_at: new Date(Date.now() - 86400000 * 1).toISOString() },
+            { id: "3", amount: 350, category: "Travel", transaction_type: "expense", description: "Uber cab to office", created_at: new Date(Date.now() - 86400000 * 2).toISOString() },
+            { id: "4", amount: 1200, category: "Bills", transaction_type: "expense", description: "Electricity Bill payment", created_at: new Date(Date.now() - 86400000 * 3).toISOString() },
+            { id: "5", amount: 2400, category: "Shopping", transaction_type: "expense", description: "Pantaloons clothes shopping", created_at: new Date(Date.now() - 86400000 * 4).toISOString() },
+            { id: "6", amount: 1500, category: "Health", transaction_type: "expense", description: "Gym membership & supplements", created_at: new Date(Date.now() - 86400000 * 5).toISOString() },
+            { id: "7", amount: 600, category: "Entertainment", transaction_type: "expense", description: "Movie tickets & popcorn", created_at: new Date(Date.now() - 86400000 * 6).toISOString() },
+            { id: "8", amount: 1000, category: "Other", transaction_type: "lent", description: "[Rahul] Movie & Dinner split", created_at: new Date(Date.now() - 86400000 * 7).toISOString() },
+            { id: "9", amount: 800, category: "Other", transaction_type: "settle_received", description: "[Rahul] Rahul paid back for dinner", created_at: new Date(Date.now() - 86400000 * 8).toISOString() },
+            { id: "10", amount: 200, category: "Travel", transaction_type: "borrowed", description: "[Sneha] Cab fare borrowed", created_at: new Date(Date.now() - 86400000 * 9).toISOString() },
+            { id: "11", amount: 120, category: "Food", transaction_type: "expense", description: "Chai & Samosa snacks", created_at: new Date(Date.now() - 86400000 * 10).toISOString() },
+            { id: "12", amount: 3000, category: "Freelance", transaction_type: "income", description: "UI Design gig payment", created_at: new Date(Date.now() - 86400000 * 11).toISOString() }
+        ];
+
+        function showDemoMode() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            document.getElementById('demo-banner').style.display = 'flex';
+            document.getElementById('user-greeting').innerText = "Welcome to MoneyMate Dashboard (Preview Mode)";
+            renderDashboard(DEMO_TRANSACTIONS);
+        }
+
+        function loadCustomToken() {
+            const val = document.getElementById('custom-token-input').value.trim();
+            if (val) {
+                window.location.search = `?token=${encodeURIComponent(val)}`;
+            }
+        }
+
         async function init() {
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');
 
-            if (!token) {
-                showError("No dashboard token provided in the URL.");
+            if (!token || token.toLowerCase() === 'demo') {
+                showDemoMode();
                 return;
             }
 
@@ -280,7 +323,7 @@
                     .limit(1);
 
                 if (userError || !users || users.length === 0) {
-                    showError("Invalid token or user not found.");
+                    showError("Invalid token or Supabase project is paused. <br><button onclick='showDemoMode()' style='margin-top:14px; padding:8px 18px; background:#4F46E5; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px;'>Explore with Sample Demo Data 🚀</button>");
                     return;
                 }
 
@@ -295,19 +338,19 @@
                     .order('created_at', { ascending: false });
 
                 if (txError) {
-                    showError("Could not fetch transactions.");
+                    showError("Could not fetch transactions. <br><button onclick='showDemoMode()' style='margin-top:12px; padding:6px 16px; background:#4F46E5; color:white; border:none; border-radius:8px; cursor:pointer;'>View Demo Data Instead</button>");
                     return;
                 }
 
                 renderDashboard(transactions);
             } catch (e) {
                 console.error(e);
-                showError("Something went wrong connecting to the database. Did you set the Supabase keys in the HTML file?");
+                showError("Could not connect to database. <br><button onclick='showDemoMode()' style='margin-top:14px; padding:8px 18px; background:#4F46E5; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px;'>Explore with Sample Demo Data 🚀</button>");
             }
         }
 
         function showError(msg) {
-            document.getElementById('loading-state').innerHTML = `<span style="color: #EF4444;">❌ ${msg}</span>`;
+            document.getElementById('loading-state').innerHTML = `<span style="color: #EF4444; font-size: 1.05rem; line-height: 1.6;">${msg}</span>`;
         }
 
         function renderDashboard(transactions) {

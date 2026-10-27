@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Money Mate Telegram Expense Tracker</title>
+<meta name="description" content="Is Money Mate free? Which languages does it understand? Can I export my data? Answers to common questions about the Money Mate AI expense tracker for Telegram.">
+<link rel="canonical" href="https://moneymate-website.vercel.app/pages/FAQ">
+<link rel="icon" type="image/png" href="../assets/img/logo-128.png">
+<link rel="apple-touch-icon" href="../assets/img/logo-512.png">
+<meta name="theme-color" content="#F3F1ED">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Money Mate">
+<meta property="og:url" content="https://moneymate-website.vercel.app/pages/FAQ">
+<meta property="og:title" content="Money Mate — Frequently Asked Questions">
+<meta property="og:description" content="Pricing, languages, data export and how the IOU ledger works.">
+<meta property="og:image" content="https://moneymate-website.vercel.app/assets/img/logo-512.png">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Is Money Mate free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The basic version of Money Mate is completely free. Core tracking will always be free." } },
+    { "@type": "Question", "name": "Which languages does it understand?", "acceptedAnswer": { "@type": "Answer", "text": "English, Hindi, Hinglish and many regional variations." } },
+    { "@type": "Question", "name": "Can I export my data?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Type /export in the chat to download all your transactions as a CSV file." } },
+    { "@type": "Question", "name": "How does the Ledger feature work?", "acceptedAnswer": { "@type": "Answer", "text": "Tell the bot when you lend or borrow money and type /ledger anytime to see who owes what." } },
+    { "@type": "Question", "name": "Do I need to download another app?", "acceptedAnswer": { "@type": "Answer", "text": "No. Money Mate lives inside Telegram." } },
+    { "@type": "Question", "name": "How do I delete my data?", "acceptedAnswer": { "@type": "Answer", "text": "Send /delete_account to the bot to permanently erase all your data." } }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<style>
+/* Accordion-style FAQ using native <details> (works without JS, keyboard accessible) */
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item:last-child { border-bottom: none; }
+.faq-item summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 0; font-family: var(--display); font-weight: 600; font-size: 22px; line-height: 1.3; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; font: 400 26px/1 var(--body); color: var(--accent); transition: transform 0.25s; flex-shrink: 0; }
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item summary:hover { color: var(--accent-dark); }
+.faq-item p { margin: 0 0 24px; color: var(--muted); }
+.content.faq { padding-block: 16px; }
+@media (max-width: 768px) { .faq-item summary { font-size: 19px; padding: 20px 0; } }
+</style>
+</head>
+<body class="subpage">
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="container">
+  <header>
+    <nav class="site-nav" aria-label="Main">
+      <a href="/landing.html" class="btn ghost back-btn" style="margin-right: 12px; padding: 8px 12px;" aria-label="Back to home">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </a>
+      <a href="/landing.html" class="brand" aria-label="Money Mate home">
+        <img src="../assets/img/logo-128.png" alt="" class="logo-icon" width="36" height="36">
+        <span>Money <i>Mate</i></span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="/landing.html">Home</a>
+        <a href="Documentation.html">Docs</a>
+        <a href="FAQ.html" aria-current="page">FAQ</a>
+        <a href="Privacy.html">Privacy</a>
+      </div>
+      <div class="nav-actions">
+        <a href="https://t.me/HeyMoneyMate_bot" class="btn tg-link" target="_blank" rel="noopener">Open Telegram</a>
+        <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <div class="page-header">
+      <h1>Frequently Asked Questions</h1>
+      <p>Got questions? We've got answers.</p>
+    </div>
+
+    <div class="content faq">
+
+      <details class="faq-item" open>
+        <summary>Is Money Mate free?</summary>
+        <p>Yes! The basic version of Money Mate is completely free to use. In the future, we may introduce premium features for advanced analytics and custom category management, but core tracking will always be free.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Which languages does it understand?</summary>
+        <p>Money Mate is powered by advanced LLMs (like Gemini/Claude) so it understands English, Hindi, Hinglish, and many other regional variations perfectly. "Bhai 500 ka petrol dalwaya" works just as well as "Spent ₹500 on petrol".</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I export my data?</summary>
+        <p>Absolutely. Your data belongs to you. You can export all your transactions into a clean CSV file at any time by typing <code>/export</code> in the chat.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>How does the Ledger feature work?</summary>
+        <p>When you tell the bot that you lent money to someone or paid for someone else (e.g., "Gave 1000 to Aman"), it adds that to your ledger as an amount owed to you. You can type <code>/ledger</code> anytime to see who owes you what. When they pay you back, just say "Aman paid me 1000 back".</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do I need to download another app?</summary>
+        <p>No! That's the beauty of Money Mate. It lives inside Telegram. If you have Telegram installed on your phone or desktop, you already have Money Mate.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I delete my data?</summary>
+        <p>Send <code>/delete_account</code> to the bot and all your data is permanently erased. See our <a href="Privacy.html">Privacy Policy</a> for details.</p>
+      </details>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="brand" style="font-size: 20px;">
+          <img src="../assets/img/logo-128.png" alt="" class="logo-icon" style="width: 28px; height: 28px; border-radius: 8px;">
+          <span>Money <i>Mate</i></span>
+        </div>
+        <p>AI Native Expense Tracking built for Telegram. Just chat and log expenses instantly without installing another app.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="Documentation.html">Documentation</a>
+        <a href="FAQ.html">FAQ</a>
+        <a href="https://t.me/HeyMoneyMate_bot" class="tg-link" target="_blank" rel="noopener">Open Telegram</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="Privacy.html">Privacy Policy</a>
+        <a href="Terms.html">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year>2026</span> Money Mate. All rights reserved.</span>
+      <span>Made with ❤️ for Telegram.</span>
+    </div>
+  </footer>
+</div>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

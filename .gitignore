@@ -1,3 +1,48 @@
-.vercel
-bot/.env
+# Environment & Secrets (NEVER COMMIT SENSITIVE ENV FILES)
 .env
+.env*
+.env.*
+*.env
+*.local
+bot/.env
+dashboard/.env*
+!*.env.example
+!**/.env.example
+
+# Python & Testing
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local SQLite databases
+*.db
+*.sqlite3
+bot/moneymate_local.db
+
+# Node & Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Vercel
+.vercel
+
+# Playwright & Generated statement previews
+preview/*.png
+!preview/.gitkeep
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Internal Docs & Roadmap (Private)
+docs/
