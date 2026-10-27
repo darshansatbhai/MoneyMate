@@ -1,1 +1,8 @@
--r bot/requirements.txt
+python-telegram-bot>=21.11
+python-dotenv>=1.0.1
+pydantic>=2.8.2
+google-genai>=2.25.0
+supabase>=2.10.0
+fastapi>=0.110.0
+uvicorn>=0.28.0
+playwright>=1.49.0
